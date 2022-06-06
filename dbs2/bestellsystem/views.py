@@ -9,6 +9,12 @@ def index(request, mitarbeiter_id):
         c.execute(f'SELECT * FROM MITARBEITER WHERE mitarbeiter_id = {mitarbeiter_id}')
         return HttpResponse (dictfetchall(c))
     
+def mitarbeiter(request):
+    with connections['DBS2'].cursor() as c:
+        c.execute(f'SELECT * FROM MITARBEITER ')
+        return render(request,'bestellsystem/mitarbeiters.html',{
+            'mitarbeiterListe' : dictfetchall(c),
+        })
 
 def dictfetchall(cursor):
     columns = [col[0] for col in cursor.description]

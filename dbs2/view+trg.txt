@@ -1,0 +1,36 @@
+CREATE OR REPLACE VIEW vw_artikel AS SELECT * FROM artikel;
+
+CREATE OR REPLACE TRIGGER trg_insert_artikel 
+    INSTEAD OF INSERT ON vw_artikel
+    FOR EACH ROW 
+DECLARE
+    l_artikel_id NUMBER;
+BEGIN
+    INSERT INTO artikel (Artikel_ID ,Kallorien ,Name ,Preis ,Allergencode,typ)
+    VALUES(:NEW.Artikel_ID, :NEW.Kallorien,:NEW.Name, :NEW.Preis, :NEW.Allergencode,:NEW.typ)   
+    RETURNING artikel_id into l_artikel_id;
+END;
+
+--Test trigger on view
+INSERT INTO vw_artikel Values (22, 2200,'travis scott burger',9.99,'A,E1','M');
+
+CREATE OR REPLACE TRIGGER trg_delete_artikel 
+    INSTEAD OF DELETE ON vw_artikel
+    FOR EACH ROW 
+BEGIN
+    DELETE FROM ARTIKEL WHERE artikel_id = :OLD.artikel_id;
+END;
+
+--Test trigger delete
+delete from vw_artikel where artikel_id = 22;
+
+CREATE OR REPLACE TRIGGER trg_update_artikel 
+    INSTEAD OF UPDATE ON vw_artikel
+    FOR EACH ROW 
+BEGIN
+    UPDATE artikel SET Kallorien = :NEW.kallorien ,Name = :NEW.name ,Preis = :NEW.preis ,Allergencode = :NEW.Allergencode ,typ = :NEW.typ
+    WHERE ARTIKEL_ID = :OLD.Artikel_id;
+END;
+
+--Test update trigger
+UPDATE vw_artikel SET name = 'Nuggetburger' where artikel_id = 15;

@@ -1,0 +1,17 @@
+{% extends 'bestellsystem/mitarbeiter.html' %}
+
+{% block body %}
+    {% for mitarbeiter in mitarbeiterListe%}
+    <div class="container">
+        <div class="row align-items-center">
+            <div class="col-3"></div>
+            <div class="col-6"></div>
+                <div class="card text-white bg-dark mb-3">
+                    <div class="card-body">
+                       {{mitarbeiter.VORNAME}} {{mitarbeiter.NAME}} , Stunden : {{mitarbeiter.ARBEITSZEIT}}
+                    </div>
+                </div>
+        </div>
+    </div>
+    {% endfor %}
+{% endblock %}

@@ -1,0 +1,21 @@
+CREATE OR REPLACE TRIGGER TRG_minBestellWert
+    BEFORE INSERT ON bestellung
+    FOR EACH ROW
+    DECLARE  minWert CONSTANT FLOAT := 5.00;        /* setze mindestbestellwert hier*/
+    BEGIN
+        dbms_output.put_line('trg_minBestellwert gefeuert');
+        IF :New.gesamtpreis < minWert then RAISE_APPLICATION_ERROR(-20001,'mindestbestellmenge unterschritten');
+        END IF;
+    END;
+    
+CREATE OR REPLACE TRIGGER TRG_BZEIT
+    BEFORE INSERT ON BESTELLUNG
+    FOR EACH ROW
+    BEGIN 
+        dbms_output.put_line('trg_BZEIT gefeuert'); 
+        IF :NEW.datum != SYSDATE then :NEW.datum := SYSDATE;
+        END IF;
+        IF :NEW.bestellzeit != SYSDATE then :NEW.bestellzeit := SYSTIMESTAMP ;
+        END IF;
+    END; 
+/* was genau soll bestellzeit sein? Die uhrzeit der bestellung? TIMESTAMP speichert uhrzeit + datum daher wird bestellung.datum zur redundanz */
