@@ -1,3 +1,0 @@
-menü FK artikel 
-Artikel : kalorien
-Menü kann beziehung 1..3
