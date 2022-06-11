@@ -1,7 +1,6 @@
-
 from django.http import HttpResponse
 from django.shortcuts import render
-from django.db import connections
+from django.db import DatabaseError, connections
 
 # Create your views here.
 def index(request, mitarbeiter_id):
@@ -25,12 +24,18 @@ def dictfetchall(cursor):
 
 def gehaltserhoehung(request,mitarbeiter_id,floatvalue):
     with connections['DBS2'].cursor() as c:
-        c.callproc(f'gehaltserhoehung',[mitarbeiter_id,1+(floatvalue/100)])
+        try:
+            c.callproc(f'gehaltserhoehung',[mitarbeiter_id,1+(floatvalue/100)])
+        except DatabaseError as E:
+            return HttpResponse(E)
         return HttpResponse('success')
 
 def gehaltskürzung(request,mitarbeiter_id,floatvalue):
     with connections['DBS2'].cursor() as c:
-        c.callproc(f'gehaltserhoehung',[mitarbeiter_id,1-(floatvalue/100)])
-        return HttpResponse()
+        try:
+            c.callproc(f'gehaltserhoehung',[mitarbeiter_id,1-(floatvalue/100)])
+        except DatabaseError as E:
+            return HttpResponse(E)
+        return HttpResponse('success?')
 
 
