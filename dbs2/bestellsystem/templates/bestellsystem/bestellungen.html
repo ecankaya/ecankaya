@@ -1,0 +1,17 @@
+{% extends 'bestellsystem/mitarbeiter.html' %}
+
+{% block body %}
+    {% for bestellung in bestellliste%}
+    <div class="container">
+        <div class="row align-items-center">
+            <div class="col-3"></div>
+            <div class="col-6"></div>
+                <div class="card text-white bg-dark mb-3">
+                    <div class="card-body">
+                       BRUTTO: {{bestellung.BRUTTOGESAMTPREIS}}, NETTO: {{bestellung.NETTOGESAMTPREIS}}, ZEIT: {{bestellung.BESTELLZEIT}}, METHODE: {{bestellung.BEZAHLMETHODE}}, WAEHRUNG: {{bestellung.WAEHRUNG}} 
+                    </div>
+                </div>
+        </div>
+    </div>
+    {% endfor %}
+{% endblock %}

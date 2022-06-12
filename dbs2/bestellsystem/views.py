@@ -1,4 +1,6 @@
-from django.http import HttpResponse
+from sqlite3 import Cursor
+from django import http
+from django.http import Http404, HttpResponse
 from django.shortcuts import render
 from django.db import DatabaseError, connections
 
@@ -13,6 +15,20 @@ def mitarbeiter(request):
         c.execute(f'SELECT * FROM MITARBEITER ')
         return render(request,'bestellsystem/mitarbeiters.html',{
             'mitarbeiterListe' : dictfetchall(c),
+        })
+
+def artikel(request):
+    with connections['DBS2'].cursor() as c:
+        c.execute(f'SELECT * FROM ARTIKEL ')
+        return render(request,'bestellsystem/artikels.html',{
+            'artikelliste' : dictfetchall(c),
+        })
+
+def bestellungen(request):
+    with connections['DBS2'].cursor() as c:
+        c.execute(f'SELECT * FROM Bestellung')
+        return render(request,'bestellsystem/bestellungen.html',{
+            'bestellliste' : dictfetchall(c),
         })
 
 def dictfetchall(cursor):

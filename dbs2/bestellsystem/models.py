@@ -5,11 +5,12 @@
 #   * Make sure each ForeignKey and OneToOneField has `on_delete` set to the desired behavior
 #   * Remove `managed = False` lines if you wish to allow Django to create, modify, and delete the table
 # Feel free to rename the models, but don't rename db_table values or field names.
+from tkinter import CASCADE
 from django.db import models
 
 
 class Artikel(models.Model):
-    artikel_id = models.BigIntegerField(primary_key=True)
+    artikel_id = models.BigAutoField(primary_key=True)
     name = models.CharField(max_length=50)
     kallorien = models.BigIntegerField(blank=True, null=True)
     preis = models.FloatField()
@@ -22,8 +23,8 @@ class Artikel(models.Model):
 
 
 class Artikelbestellung(models.Model):
-    artikel = models.ForeignKey(Artikel, models.DO_NOTHING, blank=True, null=True)
-    bestellung = models.ForeignKey('Bestellung', models.DO_NOTHING, blank=True, null=True)
+    artikel = models.ForeignKey(Artikel, models.DO_NOTHING,  related_name='ab_artikel')
+    bestellung = models.ForeignKey('Bestellung', models.DO_NOTHING,related_name='ab_bestellung',primary_key = True)
     anzahl = models.BigIntegerField(blank=True, null=True)
     schaerfeklasse = models.BigIntegerField(blank=True, null=True)
 
@@ -33,10 +34,11 @@ class Artikelbestellung(models.Model):
 
 
 class Beilage(models.Model):
-    artikel = models.ForeignKey(Artikel, models.DO_NOTHING, blank=True, primary_key=True)
+    artikel = models.OneToOneField(Artikel,on_delete=models.CASCADE,  related_name='B_artikel',primary_key=True)
     schaerfeklasse = models.ForeignKey('Schaerfescala', models.DO_NOTHING, db_column='schaerfeklasse', blank=True, null=True)
     scovil = models.BigIntegerField(blank=True, null=True)
-    groeße = models.CharField(max_length=20, blank=True, null=True)
+    groesse = models.CharField(max_length=20, blank=True, null=True)
+    typ = models.CharField(max_length=1)
 
     class Meta:
         managed = True
@@ -109,9 +111,10 @@ class Geschaeftsstelle(models.Model):
 
 
 class Getraenk(models.Model):
-    artikel = models.ForeignKey(Artikel, models.DO_NOTHING, blank=True, primary_key=True)
+    artikel = models.OneToOneField(Artikel, on_delete=models.CASCADE,  related_name='G_artikel',primary_key=True)
     eis = models.CharField(max_length=4, blank=True, null=True)
-    groeße = models.CharField(max_length=20, blank=True, null=True)
+    groesse = models.CharField(max_length=20, blank=True, null=True)
+    typ = models.CharField(max_length=1)
 
     class Meta:
         managed = True
@@ -119,9 +122,10 @@ class Getraenk(models.Model):
 
 
 class Hauptspeise(models.Model):
-    artikel = models.ForeignKey(Artikel, models.DO_NOTHING, blank=True, primary_key=True)
+    artikel = models.OneToOneField(Artikel, on_delete=models.CASCADE,  related_name='H_artikel',primary_key=True)
     schaerfeklasse = models.ForeignKey('Schaerfescala', models.DO_NOTHING, db_column='schaerfeklasse', blank=True, null=True)
     scovil = models.BigIntegerField(blank=True, null=True)
+    typ = models.CharField(max_length=1)
 
     class Meta:
         managed = True
@@ -129,11 +133,12 @@ class Hauptspeise(models.Model):
 
 
 class Menue(models.Model):
-    artikel = models.ForeignKey(Artikel, models.DO_NOTHING, blank=True, primary_key=True)
-    hauptspeise = models.ForeignKey(Artikel, models.DO_NOTHING,related_name='m_hauptspeise', db_column='hauptspeise')
-    beilage = models.ForeignKey(Artikel, models.DO_NOTHING,related_name='m_beilage', db_column='beilage', blank=True, null=True)
-    getraenk = models.ForeignKey(Artikel, models.DO_NOTHING,related_name='m_getraenk', db_column='getraenk', blank=True, null=True)
+    artikel = models.OneToOneField(Artikel, on_delete=models.CASCADE,related_name='menue_artikel',primary_key=True)
+    hauptspeise = models.ForeignKey(Hauptspeise, models.DO_NOTHING,related_name='menue_hauptspeise')
+    beilage = models.ForeignKey(Beilage, models.DO_NOTHING,related_name='menue_beilage')
+    getraenk = models.ForeignKey(Getraenk, models.DO_NOTHING,related_name='menue_getraenk')
     scovil = models.BigIntegerField(blank=True, null=True)
+    typ = models.CharField(max_length=1)
 
     class Meta:
         managed = True
@@ -145,7 +150,7 @@ class Mitarbeiter(models.Model):
     name = models.CharField(max_length=50)
     vorname = models.CharField(max_length=50)
     ort = models.CharField(max_length=50)
-    straße = models.CharField(max_length=50, blank=True, null=True)
+    strasse = models.CharField(max_length=50, blank=True, null=True)
     telefon = models.BigIntegerField(blank=True, null=True)
     email = models.CharField(max_length=50, blank=True, null=True)
     gehalt = models.FloatField()
